@@ -3,8 +3,9 @@
  * All requests include the JWT token from localStorage.
  */
 
-// Use relative URLs — Vite dev proxy forwards to http://localhost:3001
-// In production, set VITE_API_URL to your deployed backend URL
+// In production on Vercel: API is served from /api (same domain, no CORS)
+// In development: Vite proxy forwards /api/* to http://localhost:3001/api/*
+// Set VITE_API_URL to override (e.g. for a separate backend deployment)
 const BASE_URL = import.meta.env.VITE_API_URL || "";
 
 export type ApiUser = {
@@ -97,7 +98,7 @@ export async function apiSignUp(
   email: string,
   password: string
 ): Promise<AuthResponse> {
-  return request<AuthResponse>("/auth/signup", {
+  return request<AuthResponse>("/api/auth/signup", {
     method: "POST",
     body: JSON.stringify({ name, email, password }),
   });
@@ -107,7 +108,7 @@ export async function apiSignIn(
   email: string,
   password: string
 ): Promise<AuthResponse> {
-  return request<AuthResponse>("/auth/signin", {
+  return request<AuthResponse>("/api/auth/signin", {
     method: "POST",
     body: JSON.stringify({ email, password }),
   });
@@ -116,13 +117,13 @@ export async function apiSignIn(
 // ── Profile endpoints ─────────────────────────────────────────────────────────
 
 export async function apiGetProfile(): Promise<ApiUser> {
-  return request<ApiUser>("/profile");
+  return request<ApiUser>("/api/profile");
 }
 
 export async function apiUpdateProfile(
   updates: Partial<Pick<ApiUser, "name" | "email">>
 ): Promise<ApiUser> {
-  return request<ApiUser>("/profile", {
+  return request<ApiUser>("/api/profile", {
     method: "PATCH",
     body: JSON.stringify(updates),
   });
@@ -136,18 +137,18 @@ export async function apiSubmitAnalysis(payload: {
   fileName: string;
   source: "upload" | "camera";
 }): Promise<ApiAnalysis> {
-  return request<ApiAnalysis>("/analyses", {
+  return request<ApiAnalysis>("/api/analyses", {
     method: "POST",
     body: JSON.stringify(payload),
   });
 }
 
 export async function apiGetAnalyses(): Promise<ApiAnalysis[]> {
-  return request<ApiAnalysis[]>("/analyses");
+  return request<ApiAnalysis[]>("/api/analyses");
 }
 
 export async function apiDeleteAnalysis(id: string): Promise<void> {
-  return request<void>(`/analyses/${id}`, { method: "DELETE" });
+  return request<void>(`/api/analyses/${id}`, { method: "DELETE" });
 }
 
 // ── AI Features endpoints ─────────────────────────────────────────────────────
@@ -162,7 +163,7 @@ export async function apiInterviewQuestions(payload: {
     difficulty: string;
     questions: Array<{ question: string; category: string; hint: string }>;
     tips: string[];
-  }>("/ai/interview-questions", { method: "POST", body: JSON.stringify(payload) });
+  }>("/api/ai/interview-questions", { method: "POST", body: JSON.stringify(payload) });
 }
 
 export async function apiRoleSuggestions(payload: {
@@ -178,7 +179,7 @@ export async function apiRoleSuggestions(payload: {
     actionVerbs: { used: string[]; missing: string[] };
     sections: { section: string; present: boolean; quality?: string; suggestion?: string }[];
     quickWins: string[];
-  }>("/ai/role-suggestions", { method: "POST", body: JSON.stringify(payload) });
+  }>("/api/ai/role-suggestions", { method: "POST", body: JSON.stringify(payload) });
 }
 
 export async function apiRecruiterFeedback(payload: {
@@ -194,7 +195,7 @@ export async function apiRecruiterFeedback(payload: {
     suggestions: string[];
     firstImpression: string;
     standoutFactor?: string;
-  }>("/ai/recruiter-feedback", { method: "POST", body: JSON.stringify(payload) });
+  }>("/api/ai/recruiter-feedback", { method: "POST", body: JSON.stringify(payload) });
 }
 
 export async function apiHeatmap(payload: { resumeText: string }) {
@@ -205,5 +206,5 @@ export async function apiHeatmap(payload: { resumeText: string }) {
     strongest: string;
     weakest: string;
     summary: string;
-  }>("/ai/heatmap", { method: "POST", body: JSON.stringify(payload) });
+  }>("/api/ai/heatmap", { method: "POST", body: JSON.stringify(payload) });
 }

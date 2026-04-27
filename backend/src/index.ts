@@ -51,8 +51,16 @@ app.use(express.urlencoded({ extended: true, limit: "2mb" }));
 app.get("/health", (_req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
+app.get("/api/health", (_req, res) => {
+  res.json({ status: "ok", timestamp: new Date().toISOString() });
+});
 
-// Routes
+// Routes — support both /api/* (production) and /* (legacy local)
+app.use("/api/auth", authLimiter, authRoutes);
+app.use("/api/analyses", analysesRoutes);
+app.use("/api/profile", profileRoutes);
+app.use("/api/ai", aiFeaturesRoutes);
+// Legacy local routes (keep for backward compat)
 app.use("/auth", authLimiter, authRoutes);
 app.use("/analyses", analysesRoutes);
 app.use("/profile", profileRoutes);

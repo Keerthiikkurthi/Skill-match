@@ -11,25 +11,8 @@ export default defineConfig(() => ({
       overlay: false,
     },
     proxy: {
-      // Proxy all /auth, /analyses, /profile, /health calls to the backend
-      // This avoids CORS issues entirely — the browser talks to Vite, Vite forwards to Express
-      "/auth": {
-        target: "http://localhost:3001",
-        changeOrigin: true,
-      },
-      "/analyses": {
-        target: "http://localhost:3001",
-        changeOrigin: true,
-      },
-      "/profile": {
-        target: "http://localhost:3001",
-        changeOrigin: true,
-      },
-      "/health": {
-        target: "http://localhost:3001",
-        changeOrigin: true,
-      },
-      "/ai": {
+      // Proxy all /api/* calls to the backend in development
+      "/api": {
         target: "http://localhost:3001",
         changeOrigin: true,
       },
