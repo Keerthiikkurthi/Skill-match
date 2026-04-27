@@ -43,3 +43,5 @@ ml-service/**/__pycache__/
 
 # Kiro internal
 .kiro/specs/
+
+.vercel
